@@ -13,13 +13,14 @@ find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets LinguistTools)
 find_package(Qt6 REQUIRED COMPONENTS Sql)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets LinguistTools )
 
+
 set(TS_FILES AddressBook_zh_CN.ts)
 
 set(PROJECT_SOURCES
         main.cpp
-        addressbook.cpp
-        addressbook.h
-        addressbook.ui
+        mainwindow.cpp
+        mainwindow.h
+        mainwindow.ui
         ${TS_FILES}
 )
 
@@ -28,9 +29,10 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         MANUAL_FINALIZATION
         ${PROJECT_SOURCES}
         android/AndroidManifest.xml android/build.gradle android/res/values/libs.xml android/res/xml/qtprovider_paths.xml android/gradle/wrapper/gradle-wrapper.jar android/gradle/wrapper/gradle-wrapper.properties android/gradle.properties android/gradlew android/gradlew.bat
-        addnew.h addnew.cpp
-        addnew.ui
-        android/AndroidManifest.xml android/build.gradle android/res/values/libs.xml android/res/xml/qtprovider_paths.xml android/gradle/wrapper/gradle-wrapper.jar android/gradle/wrapper/gradle-wrapper.properties android/gradle.properties android/gradlew android/gradlew.bat
+        addnew.h addnew.cpp addnew.ui
+        addressbook.h addressbook.cpp addressbook.ui
+        mainwindow.h mainwindow.cpp mainwindow.ui
+        resource.qrc ico.rc
     )
 # Define target properties for Android with Qt 6 as:
 #    set_property(TARGET AddressBook APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR

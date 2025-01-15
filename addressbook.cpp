@@ -1,6 +1,5 @@
 #include "addressbook.h"
 #include "ui_addressbook.h"
-#include "addnew.h"
 #include "QDateTime"
 #include <qtimer.h>
 #include <QMenu>
@@ -13,8 +12,6 @@
 #include <QStyle>
 #include <QScrollBar>
 
-
-QString s1 = "";
 QString a1; //sort order
 QTimer *timer = new QTimer();
 
@@ -50,33 +47,30 @@ void AddressBook::display_dateAndtime()
     ui->lcdNumber->display(time);
 }
 
+
 //update sort in time(a1=1) or alphabet(a1=0)
 void AddressBook::on_pushButton_1_clicked()
 {
-
     a1 = ui->comboBox->currentText();
     if(a1 == "Time")
     {
         ListSqlite(1);
     }
     else ListSqlite(0);
-
-}
-
-//add new contact
-void AddressBook::on_pushButton_2_clicked()
-{
-    AddNew *w1 = new AddNew;
-    w1->show();
 }
 
 //query the contacts for someone
-void AddressBook::on_pushButton_3_clicked()
+void AddressBook::on_pushButton_2_clicked()
 {
+    QFont font1;
+    font1.setPointSize(12);
     QInputDialog m1;
+    m1.setFont(font1);
+    m1.setWindowIcon(QIcon(":/icon/search.png"));
     m1.setWindowTitle("Search for Contact");
     m1.setLabelText("Input a name:");
     m1.exec();
+    QString s1;
     s1 = m1.textValue();
     m1.setAttribute(Qt::WA_DeleteOnClose);
 
@@ -108,17 +102,13 @@ void AddressBook::on_pushButton_3_clicked()
     QMessageBox m2;
     m2.setWindowTitle("contact found");
     m2.setText(res1);
+    m2.setFont(font1);
+    m2.setWindowIcon(QIcon(":/icon/user.png"));
     QPixmap p1(QString("./pic/%1.jpg").arg(s1));
     //160,140
     p1 = p1.scaled(160, 140, Qt::KeepAspectRatio, Qt::SmoothTransformation);
     m2.setIconPixmap(p1);
     m2.exec();
-}
-
-//turn off app
-void AddressBook::on_pushButton_4_clicked()
-{
-    this->close();
 }
 
 void AddressBook::on_comboBox_textActivated(const QString &arg1)
@@ -139,15 +129,17 @@ void AddressBook::on_listWidget_customContextMenuRequested(const QPoint &pos)
 {
     QMenu  *m1 = new QMenu(ui->listWidget);
 
-    m1->setStyleSheet("QMenu{background-color: rgb(255,255,255); border-radius: 5px;}\
-                       QMenu::item{border-bottom: 1px solid rgb(0,0,0); border-radius: 5px; background-color: #ffffff;}\
-                       QMenu::item:hover,QMenu::item:selected{background-color: rgb(104,104,104);}");
+    m1->setStyleSheet("QMenu{background-color: rgb(255,255,255);}\
+                       QMenu::item{background-color: #ffffff;}\
+                       QMenu::item:hover,QMenu::item:selected{background-color: rgb(198, 184, 255);}");
 
     QFont f1;
     f1.setPointSize(12);
     m1->setFont(f1);
-    QAction  *d1 = new QAction(tr("     Delete       "), this);
-    QAction  *mod = new QAction(tr("     Modify       "), this);
+    QAction  *d1 = new QAction(tr("Delete this Contact"), this);
+    d1->setIcon(QIcon(":/icon/delete.png"));
+    QAction  *mod = new QAction(tr("Modify the Contact"), this);
+    mod->setIcon(QIcon(":/icon/edit.png"));
 
     connect(d1, SIGNAL(triggered()), this, SLOT(DeleteSqlite()));
     connect(mod, SIGNAL(triggered()), this, SLOT(Modify()));
@@ -206,7 +198,7 @@ void AddressBook::ListSqlite(bool q1)
 
         QListWidgetItem *add_item = new QListWidgetItem(ui->listWidget);
         add_item->setSizeHint(QSize(400,140));
-        add_item->setFont(QFont("Source Code Pro",14));
+        add_item->setFont(QFont("Microsoft YaHei UI",12));
 
         QFileInfo t1(QString("./pic/%1.png").arg(name));
         if(t1.isFile())
@@ -226,7 +218,8 @@ void AddressBook::ListSqlite(bool q1)
         ui->listWidget->addItem(add_item);
         ui->listWidget->setStyleSheet("QListWidget{background:rgb(255,255,255); border: 2px solid #fff; border-radius: 5px}"
                                       "QListWidget::Item{background: rgb(255,255,255); border-radius: 5px; border: 1px solid rgb(198, 184, 255);}"
-                                      "QListWidget::Item:hover,QListWidget::Item:selected{background: rgb(205,205,205);}");
+                                      "QListWidget::Item:hover{background: rgb(205,205,205);}"
+                                      "QListWidget::Item:selected{background: rgb(105,105,105); color: rgb(0,0,0)}");
         ui->listWidget->setSpacing(1);
 
     }
@@ -236,6 +229,7 @@ void AddressBook::ListSqlite(bool q1)
 void AddressBook::DeleteSqlite()
 {
     QList<QListWidgetItem*> items = ui->listWidget->selectedItems();
+    QString s1;
 
     foreach(QListWidgetItem* var, items)
     {
@@ -254,7 +248,7 @@ void AddressBook::DeleteSqlite()
     }
     else
     {
-        a1 = QSqlDatabase::addDatabase("SQLITECIPHER");
+        a1 = QSqlDatabase::addDatabase("SQLITE");
 
     }
     a1.setDatabaseName("addressbook.sqlite3");
@@ -273,6 +267,7 @@ void AddressBook::Modify()
 {
     QList<QListWidgetItem*> items = ui->listWidget->selectedItems();
 
+    QString s1;
     foreach(QListWidgetItem* var, items)
     {
         s1 = var->text();
@@ -282,8 +277,7 @@ void AddressBook::Modify()
         s1 = s2.last().simplified();
     }
 
-    AddNew *w = new AddNew;
-    w->setWindowTitle("Modify Contact");
-    w->modifySqlite();
-    w->show();
+    // send signal
+    emit sendText(s1);
+    emit SwitchPage();
 }

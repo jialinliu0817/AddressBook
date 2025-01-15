@@ -8,20 +8,21 @@ class AddressBook;
 }
 
 class AddressBook : public QMainWindow
-{
-    Q_OBJECT
+{    Q_OBJECT
 
 public:
     explicit AddressBook(QWidget *parent = nullptr);
     ~AddressBook();
     void get_dateAndtime(QString &date, QString &time);
 
+signals:
+    void sendText(QString str);
+    void SwitchPage();
+
 private slots:
     void display_dateAndtime();
-    void on_pushButton_1_clicked();
-    void on_pushButton_2_clicked();
-    void on_pushButton_3_clicked();
-    void on_pushButton_4_clicked();
+    void on_pushButton_1_clicked(); //update
+    void on_pushButton_2_clicked(); //query contact
     void ListSqlite(bool q1);
     void DeleteSqlite();
     void Modify();
