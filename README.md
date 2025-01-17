@@ -2,6 +2,7 @@
 AddressBook with Qt6
 
 **environment**: 
+
 os: win10     
 ide: Qt6.8.1   
 database: sqlite3
