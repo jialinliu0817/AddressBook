@@ -28,7 +28,6 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_add_executable(AddressBook
         MANUAL_FINALIZATION
         ${PROJECT_SOURCES}
-        android/AndroidManifest.xml android/build.gradle android/res/values/libs.xml android/res/xml/qtprovider_paths.xml android/gradle/wrapper/gradle-wrapper.jar android/gradle/wrapper/gradle-wrapper.properties android/gradle.properties android/gradlew android/gradlew.bat
         addnew.h addnew.cpp addnew.ui
         addressbook.h addressbook.cpp addressbook.ui
         mainwindow.h mainwindow.cpp mainwindow.ui

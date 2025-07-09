@@ -18,12 +18,13 @@ MainWindow::MainWindow(QWidget *parent)
     ui->stackedWidget->setCurrentIndex(eForm1);
 
     connect(adb1, SIGNAL(SwitchPage()), this, SLOT(SwitchPage2()));
-    connect(adb1, SIGNAL(sendText(QString)), an1, SLOT(ModifySqlite(QString)));
-    connect(adb1, SIGNAL(sendText(QString)), an1, SLOT(ReceiveName(QString)));
+    connect(adb1, SIGNAL(sendText(QString)), an1, SLOT(ReceiveName(QString))); //s1 receive modify contact name
+    connect(adb1, SIGNAL(sendText(QString)), an1, SLOT(ModifySqlite(QString))); //modify contact, to modify page
+    connect(an1, SIGNAL(SwitchPage()), this, SLOT(SwitchPage1()));
+
 
     QAction *p1 = new QAction(ui->menuMenu);
     p1->setText(tr("Home"));
-    QIcon *i1 = new QIcon;
     p1->setIcon(QIcon(":/icon/home.png"));
     ui->menuMenu->addAction(p1);
 
@@ -33,8 +34,10 @@ MainWindow::MainWindow(QWidget *parent)
     ui->menuMenu->addAction(p2);
 
     connect(p1,SIGNAL(triggered()), this,SLOT(SwitchPage1()));
-    connect(p2,SIGNAL(triggered()), an1,SLOT(on_pushButton_3_clicked()));
-    connect(p2,SIGNAL(triggered()), an1,SLOT(setName()));
+    connect(p1,SIGNAL(triggered()), an1,SLOT(setName()));
+
+    connect(p2,SIGNAL(triggered()), an1,SLOT(on_pushButton_3_clicked())); //clear add new window when add new contact
+    connect(p2,SIGNAL(triggered()), an1,SLOT(setName()));  // set s1="" when add new contact
     connect(p2,SIGNAL(triggered()), this,SLOT(SwitchPage2()));
 }
 

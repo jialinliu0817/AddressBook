@@ -6,8 +6,10 @@
 #include <QSqlDatabase>
 #include <QSqlQuery>
 
-QString filename;
-QString s2;
+QString filename;  //old avatar path
+QString filename1; //new avatar dir
+QString s2;    //contact name that need to modify
+bool stat1 = false;  //sucess modify or add if stat1 = true
 extern QTimer *timer;
 
 AddNew::AddNew(QWidget *parent) :
@@ -36,7 +38,8 @@ void AddNew::display_dateAndtime()
     ui->lcdNumber->display(time);
 }
 
-void AddNew::AddSqlite(QString s1)
+//add or modify contact
+void AddNew::AddSqlite(QString s2)
 {
     QString name = ui->lineEdit_1->text();
     QString phone = ui->lineEdit_2->text();
@@ -48,8 +51,8 @@ void AddNew::AddSqlite(QString s1)
     time = t1.time().toString();
     date = date + ' ' + time;
 
-    //if s1!= "", then modify the contact where contact name=s1
-    if(s1 != "")
+    //if s2!= ""(contact exist already), then modify the contact where contact name = s2
+    if(s2 != "")
     {
         QSqlDatabase a1;
         if(QSqlDatabase::contains("qt_sql_default_connection"))
@@ -70,34 +73,77 @@ void AddNew::AddSqlite(QString s1)
                              "SET phone='%1', email='%2', address='%3' "
                              "Where name='%4'").arg(phone, email, address, name);
 
-        if(!filename.isEmpty())
+        QDir absDir(filename);
+        QString oldAvatar = filename;
+        filename = absDir.absolutePath();
+        qDebug()<<"filename: "<<filename;
+        qDebug()<<"filename1: "<<filename1;
+        if(!filename1.isEmpty())
         {
-            QStringList r1 = filename.split("/");
+            QStringList r1 = filename1.split("/"); //new chosen avatar dir
+            QString com1=""; //new chosen avatar dir to compare
             QStringList r2 = r1.last().split(".");
-            QString r3 = r2.last();
-            QFile currentfile(filename);
+            QString r3 = r2.last(); //new avatar suffix
+            r1.removeLast();
 
-            QFileInfo f1("./pic/");
-            if(!f1.isDir())
+            for(int i=0;i<r1.count();i++)
             {
-                QDir *path = new QDir;
-                path->mkpath("./pic/");
+                com1 = com1+r1.at(i)+"/";
             }
+            qDebug()<<"com1: "<<com1;
 
-            currentfile.copy(QString("./pic/%1.%2").arg(name, r3));
+            r1 = filename.split("/");     //old avatar dir
+            QString com="";
+            r1.removeLast();
+
+            for(int i=0;i<r1.count();i++)
+            {
+                com = com+r1.at(i)+"/";
+            }
+            qDebug()<<"com: "<<com;
+
+            if(com == com1)    //old and new avatar in same Dir
+            {
+                QFileInfo FileInfo(oldAvatar);
+
+                if(FileInfo.isFile())    //delete old avatar
+                {
+                    QFile::remove(oldAvatar);
+                }
+
+                QFile currentfile(filename1);
+                currentfile.copy(QString("./pic/%1.%2").arg(name, r3));  //copy new avatar
+            }
+            else  //old and new avatar not in same Dir
+            {
+                QFileInfo FileInfo(oldAvatar);
+
+                if(FileInfo.isFile())    //delete old avatar
+                {
+                    QFile::remove(oldAvatar);
+                }
+
+                QFile currentfile(filename1);
+                QFileInfo f1("./pic/");
+
+                if(!f1.isDir())
+                {
+                    QDir *path = new QDir;
+                    path->mkpath("./pic/");
+                }
+                currentfile.copy(QString("./pic/%1.%2").arg(name, r3));
+            }
         }
 
         if(b1.exec(b2))
         {
-            ui->label_8->setFont(QFont("Source Code Pro",12));
-            ui->label_8->setStyleSheet("background: green");
-            ui->label_8->setText("successfully modified!");
+            stat1 = true;
+            filename1 = "";
         }
     }
-    else if(name == "" || phone == "")
+    else if(name == "" || phone == "")    //check if follow adding rules when s2 doesn't exist
     {
         ui->label_8->setFont(QFont("Source Code Pro",12));
-        ui->label_8->setStyleSheet("background: red");
         ui->label_8->setText("name or phone can't be null!!");
     }
     else
@@ -119,7 +165,7 @@ void AddNew::AddSqlite(QString s1)
         QSqlQuery b1;
         b1.exec("Select * From contact");
 
-        if(!b1.first())
+        if(!b1.first())  //if contact is empty, then create a new contact table
         {
             b1.exec("Create Table contact"
                     "(name text not null primary key, "
@@ -128,30 +174,31 @@ void AddNew::AddSqlite(QString s1)
                     "address text,"
                     "date text)");
         }
+        else    //(contact table exist)query to find if name or phone exist
+        {
+            b1.exec(QString("Select * "
+                            "From contact "
+                            "Where name = '%1' and phone = '%2'").arg(name, phone));
+        }
 
-        b1.exec(QString("Select * "
-                        "From contact "
-                        "Where name = '%1' and phone = '%2'").arg(name, phone));
-
-        if(b1.first())
+        if(b1.first())  //check if contact already exist
         {
             ui->label_8->setFont(QFont("Source Code Pro",12));
             ui->label_8->setText("name and phone exists!!");
-            ui->label_8->setStyleSheet("background: green");
         }
-        else
+        else  //contact doesn't exist, then add new contact
         {
             QString contact = QString("'%1', '%2', '%3', '%4', '%5'").arg(name, phone, email, address, date);
             QString b2 = QString("Insert Into contact\n"
                                  "(name, phone, email, address, date) "
                                  "Values(%1)").arg(contact);
 
-            if(!filename.isEmpty())
+            if(!filename1.isEmpty())
             {
-                QStringList r1 = filename.split("/");
+                QStringList r1 = filename1.split("/");
                 QStringList r2 = r1.last().split(".");
-                QString r3 = r2.last();
-                QFile currentfile(filename);
+                QString r3 = r2.last();  //suffix of new contact avatar
+                QFile currentfile(filename1);
 
                 QFileInfo f1("./pic/");
                 if(!f1.isDir())
@@ -165,9 +212,8 @@ void AddNew::AddSqlite(QString s1)
 
             if(b1.exec(b2))
             {
-                ui->label_8->setFont(QFont("Source Code Pro",12));
-                ui->label_8->setStyleSheet("background: green");
-                ui->label_8->setText("successfully added!");
+                stat1 = true;
+                filename1 = "";
             }
         }
 
@@ -178,24 +224,34 @@ void AddNew::AddSqlite(QString s1)
 //choose avatar
 void AddNew::on_pushButton_1_clicked()
 {
-    filename = QFileDialog::getOpenFileName(this, "Please choose an avatar", "*.png; *.jpg");
+    filename1 = QFileDialog::getOpenFileName(this, "Please choose an avatar", "*.png; *.jpg");
 
     QImage p1;
-    p1.load(filename);
+    p1.load(filename1);
     p1 = p1.scaled(160, 140, Qt::KeepAspectRatio, Qt::SmoothTransformation);
     ui->label_7->setPixmap(QPixmap::fromImage(p1));
+    ui->label_8->setFont(QFont("Source Code Pro",12));
+    ui->label_8->setText(filename1);
 }
 
-//add new contact
+//add new contact when s2="", modify contact when s2!=""
 void AddNew::on_pushButton_2_clicked()
 {
     AddSqlite(s2);
+    if(stat1)
+    {
+        setName();  //after modify, set s2 = ""
+        emit SwitchPage();  //after modify or add contact, return to main page
+    }
 }
 
-//clear window
+//clear add new contact window
 void AddNew::on_pushButton_3_clicked()
 {
-    ui->lineEdit_1->clear();
+    if(s2 == "")
+    {
+        ui->lineEdit_1->clear();
+    }
     ui->lineEdit_2->clear();
     ui->lineEdit_3->clear();
     ui->lineEdit_4->clear();
@@ -204,7 +260,7 @@ void AddNew::on_pushButton_3_clicked()
     ui->label_8->setStyleSheet("background: rgb(255,255,255)");
 }
 
-void AddNew::ModifySqlite(QString s1)
+void AddNew::ModifySqlite(QString s2)
 {
     QSqlDatabase a1;
     if(QSqlDatabase::contains("qt_sql_default_connection"))
@@ -221,7 +277,7 @@ void AddNew::ModifySqlite(QString s1)
     a1.open();
 
     QSqlQuery b1;
-    b1.exec(QString("Select * From contact where name = '%1' ").arg(s1));
+    b1.exec(QString("Select * From contact where name = '%1' ").arg(s2));
 
     while(b1.next())
     {
@@ -230,28 +286,41 @@ void AddNew::ModifySqlite(QString s1)
         QString email = b1.value(2).toString();
         QString address = b1.value(3).toString();
         ui->lineEdit_1->setText(name);
+        ui->lineEdit_1->setReadOnly(true);
         ui->lineEdit_2->setText(phone);
         ui->lineEdit_3->setText(email);
         ui->lineEdit_4->setText(address);
 
-        QFileInfo t1(QString("./pic/%1.jpg").arg(name));
-        if(t1.isFile())
+        QString path = "./pic";
+        QDir dir(path);
+        if(!dir.exists())
         {
-            QImage p1;
-            p1.load(QString("./pic/%1.jpg").arg(s1));
-            p1 = p1.scaled(160, 140, Qt::KeepAspectRatio, Qt::SmoothTransformation);
-            ui->label_7->setPixmap(QPixmap::fromImage(p1));
-            ui->label_8->clear();
-            ui->label_8->setStyleSheet("background: rgb(255,255,255)");
+            return;
         }
-        t1.setFile(QString("./pic/%1.png").arg(name));
+        dir.setFilter(QDir::Files | QDir::NoSymLinks);
+        QStringList filters;
+        filters << QString("%1.png").arg(s2) << QString("%1.jpg").arg(s2);
+        dir.setNameFilters(filters);
+        QStringList list = dir.entryList();
+        if (list.count() <= 0)
+        {
+            return;
+        }
+        qDebug()<<"old avatar list: "<<list;
+
+        QStringList r2 = list.last().split(".");
+        QString r3 = r2.last();  //old contact avatar suffix
+        QFileInfo t1;
+        filename = QString("./pic/%1.%2").arg(name, r3);
+        t1.setFile(filename);
         if(t1.isFile())
         {
             QImage p1;
-            p1.load(QString("./pic/%1.jpg").arg(s1));
+            p1.load(filename);
             p1 = p1.scaled(160, 140, Qt::KeepAspectRatio, Qt::SmoothTransformation);
             ui->label_7->setPixmap(QPixmap::fromImage(p1));
-            ui->label_8->clear();
+            ui->label_8->setFont(QFont("Source Code Pro",12));
+            ui->label_8->setText(filename);
             ui->label_8->setStyleSheet("background: rgb(255,255,255)");
         }
     }
@@ -260,10 +329,12 @@ void AddNew::ModifySqlite(QString s1)
 
 void AddNew::ReceiveName(QString s1)
 {
-    s2 = s1;
+    s2 = s1; //receive contact name value from addressbook page
 }
 
 void AddNew::setName()
 {
     s2 = "";
+    ui->lineEdit_1->clear();
+    ui->lineEdit_1->setReadOnly(false);
 }

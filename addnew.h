@@ -15,10 +15,13 @@ public:
     explicit AddNew(QWidget *parent = nullptr);
     ~AddNew();
 
+signals:
+    void SwitchPage();
+
 private slots:
     void on_pushButton_1_clicked(); //browser avtar
-    void on_pushButton_2_clicked(); //confirm add
-    void on_pushButton_3_clicked(); //close window
+    void on_pushButton_2_clicked(); //confirm add new contact
+    void on_pushButton_3_clicked(); //clear window
     void display_dateAndtime();
     void AddSqlite(QString s1); //add new contact
     void ModifySqlite(QString str); //modify the contact

@@ -13,6 +13,7 @@
 #include <QScrollBar>
 
 QString a1; //sort order
+QString r3;
 QTimer *timer = new QTimer();
 
 AddressBook::AddressBook(QWidget *parent) :
@@ -108,6 +109,11 @@ void AddressBook::on_pushButton_2_clicked()
     //160,140
     p1 = p1.scaled(160, 140, Qt::KeepAspectRatio, Qt::SmoothTransformation);
     m2.setIconPixmap(p1);
+    //QPixmap p2(QString("./pic/%1.png").arg(s1));
+    //160,140
+    //p2 = p2.scaled(160, 140, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+    //m2.setIconPixmap(p2);
+
     m2.exec();
 }
 
@@ -200,16 +206,30 @@ void AddressBook::ListSqlite(bool q1)
         add_item->setSizeHint(QSize(400,140));
         add_item->setFont(QFont("Microsoft YaHei UI",12));
 
-        QFileInfo t1(QString("./pic/%1.png").arg(name));
-        if(t1.isFile())
+
+        QString path = "./pic";
+        QDir dir(path);
+        if(!dir.exists())
         {
-            add_item->setIcon(QIcon(QString("./pic/%1.png").arg(name)));
+            return;
+        }
+        dir.setFilter(QDir::Files | QDir::NoSymLinks);
+        QStringList filters;
+        filters << QString("%1.png").arg(name) << QString("%1.jpg").arg(name);
+        dir.setNameFilters(filters);
+        QStringList list = dir.entryList();
+        if (list.count() <= 0)
+        {
+            return;
         }
 
-        t1.setFile(QString("./pic/%1.jpg").arg(name));
+        QStringList r2 = list.last().split(".");
+        r3 = r2.last();  //suffix of contact avatar
+
+        QFileInfo t1(QString("./pic/%1").arg(list.last()));
         if(t1.isFile())
         {
-            add_item->setIcon(QIcon(QString("./pic/%1.jpg").arg(name)));
+            add_item->setIcon(QIcon(QString("./pic/%1").arg(list.last())));
         }
 
         ui->listWidget->setIconSize(QSize(160,140));
@@ -260,6 +280,15 @@ void AddressBook::DeleteSqlite()
 
     a1.close();
 
+    QString avatar = QString("./pic/%1.%2").arg(s1, r3);
+    qDebug()<<avatar;
+    QFileInfo FileInfo(avatar);
+
+    if(FileInfo.isFile())    //delete old avatar
+    {
+        QFile::remove(avatar);
+    }
+
     on_pushButton_1_clicked();
 }
 
@@ -272,12 +301,12 @@ void AddressBook::Modify()
     {
         s1 = var->text();
         QStringList s2 = s1.split("\n");
-        s1 = s2.at(1);
+        s1 = s2.at(1);    //name: "contact name"
         s2 = s1.split(":");
-        s1 = s2.last().simplified();
+        s1 = s2.last().simplified();    //contact name
     }
 
-    // send signal
+    //send signal
     emit sendText(s1);
     emit SwitchPage();
 }
