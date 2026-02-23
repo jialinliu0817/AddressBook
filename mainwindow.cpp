@@ -100,5 +100,5 @@ void MainWindow::showAbout()
 void MainWindow::showRelease()
 {
     QDesktopServices::openUrl(
-        QUrl("https://github.com/jialinliu0817/AddressBook/releases/tag/Qt"));
+        QUrl("https://github.com/jialinliu0817/AddressBook/releases/latest"));
 }
