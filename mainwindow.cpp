@@ -91,7 +91,7 @@ void MainWindow::showAbout()
         "with avatar support and time/alphabet sorting.</p>"
         "<p><b>Repository:</b><br/>"
         "<a href='https://github.com/jialinliu0817/AddressBook'>"
-        "https://github.com/jialinliu0817/AddressBook</a></p>"
+        "AddressBook</a></p>"
     );
     mb.setStandardButtons(QMessageBox::Ok);
     mb.exec();
