@@ -2,6 +2,9 @@
 #include "ui_mainwindow.h"
 #include "addressbook.h"
 #include "addnew.h"
+#include <QMessageBox>
+#include <QDesktopServices>
+#include <QUrl>
 
 enum eStackedWidgetID{eForm1 = 0,eForm2,eForm3};
 
@@ -39,6 +42,19 @@ MainWindow::MainWindow(QWidget *parent)
     connect(p2,SIGNAL(triggered()), an1,SLOT(on_pushButton_3_clicked())); //clear add new window when add new contact
     connect(p2,SIGNAL(triggered()), an1,SLOT(setName()));  // set s1="" when add new contact
     connect(p2,SIGNAL(triggered()), this,SLOT(SwitchPage2()));
+
+    // About menu
+    QAction *a1 = new QAction(ui->menuAbout);
+    a1->setText(tr("About AddressBook"));
+    a1->setIcon(QIcon(":/icon/addressbook.png"));
+    ui->menuAbout->addAction(a1);
+
+    QAction *a2 = new QAction(ui->menuAbout);
+    a2->setText(tr("Latest Release"));
+    ui->menuAbout->addAction(a2);
+
+    connect(a1, SIGNAL(triggered()), this, SLOT(showAbout()));
+    connect(a2, SIGNAL(triggered()), this, SLOT(showRelease()));
 }
 
 MainWindow::~MainWindow()
@@ -56,3 +72,33 @@ void MainWindow::SwitchPage2()
     ui->stackedWidget->setCurrentIndex(eForm2);
 }
 
+void MainWindow::showAbout()
+{
+    QMessageBox mb(this);
+    mb.setWindowTitle(tr("About AddressBook"));
+    mb.setWindowIcon(QIcon(":/icon/addressbook.png"));
+    mb.setIconPixmap(QIcon(":/icon/addressbook.png").pixmap(64, 64));
+    mb.setTextFormat(Qt::RichText);
+    mb.setText(
+        "<h2 style='margin:0;'>AddressBook</h2>"
+        "<hr/>"
+        "<p><b>Version:</b> Qt6 (tag: Qt)</p>"
+        "<p><b>Published:</b> 2025-01-15</p>"
+        "<p><b>Environment:</b> Windows 10 &nbsp;|&nbsp; Qt 6.8.1 &nbsp;|&nbsp; SQLite3</p>"
+        "<p><b>Description:</b><br/>"
+        "A desktop address book application built with Qt6.<br/>"
+        "Supports adding, editing, deleting and searching contacts,<br/>"
+        "with avatar support and time/alphabet sorting.</p>"
+        "<p><b>Repository:</b><br/>"
+        "<a href='https://github.com/jialinliu0817/AddressBook'>"
+        "https://github.com/jialinliu0817/AddressBook</a></p>"
+    );
+    mb.setStandardButtons(QMessageBox::Ok);
+    mb.exec();
+}
+
+void MainWindow::showRelease()
+{
+    QDesktopServices::openUrl(
+        QUrl("https://github.com/jialinliu0817/AddressBook/releases/tag/Qt"));
+}
