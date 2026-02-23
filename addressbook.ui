@@ -314,13 +314,13 @@ QPushButton:pressed {
         </property>
         <property name="minimumSize">
          <size>
-          <width>90</width>
+          <width>115</width>
           <height>30</height>
          </size>
         </property>
         <property name="maximumSize">
          <size>
-          <width>90</width>
+          <width>150</width>
           <height>30</height>
          </size>
         </property>
@@ -334,6 +334,9 @@ QPushButton:pressed {
         </property>
         <property name="mouseTracking">
          <bool>true</bool>
+        </property>
+        <property name="sizeAdjustPolicy">
+         <enum>QComboBox::SizeAdjustPolicy::AdjustToContents</enum>
         </property>
         <property name="layoutDirection">
          <enum>Qt::LayoutDirection::LeftToRight</enum>
