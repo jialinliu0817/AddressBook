@@ -54,7 +54,7 @@ MainWindow::MainWindow(QWidget *parent)
     // ── View menu ──────────────────────────────────────────────────────
     QAction *vOpacity = new QAction(ui->menuView);
     vOpacity->setText(tr("Opacity..."));
-    vOpacity->setIcon(QIcon::fromTheme(QIcon::ThemeIcon::ZoomOriginal));
+    vOpacity->setIcon(QIcon::fromTheme("zoom-original"));
     ui->menuView->addAction(vOpacity);
 
     ui->menuView->addSeparator();
