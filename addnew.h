@@ -14,6 +14,7 @@ class AddNew : public QMainWindow
 public:
     explicit AddNew(QWidget *parent = nullptr);
     ~AddNew();
+    void applyTheme(bool dark);
 
 signals:
     void SwitchPage();

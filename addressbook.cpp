@@ -66,7 +66,7 @@ void AddressBook::display_dateAndtime()
 void AddressBook::on_pushButton_1_clicked()
 {
     a1 = ui->comboBox->currentText();
-    if(a1 == "Time")
+    if(a1 == "Date Added")
     {
         ListSqlite(1);
     }
@@ -139,7 +139,7 @@ void AddressBook::on_comboBox_textActivated(const QString &arg1)
         path->mkpath("./pic/");
     }
 
-    if(arg1 == "Time")
+    if(arg1 == "Date Added")
         ListSqlite(1);
     else ListSqlite(0);
 }
@@ -351,4 +351,69 @@ void AddressBook::Modify()
     //send signal
     emit sendText(s1);
     emit SwitchPage();
+}
+
+void AddressBook::applyTheme(bool dark)
+{
+    // Color palette
+    const QString bg        = dark ? "#13111C" : "#F5F3FF";
+    const QString cardBg    = dark ? "#1E1B2E" : "#FFFFFF";
+    const QString border    = dark ? "#3B3870" : "#DDD6FE";
+    const QString text      = dark ? "#E5E7EB" : "#1F2937";
+    const QString accent    = "#7C3AED";
+    const QString accentBg  = dark ? "#2D2257" : "#EDE9FE";
+    const QString lcdBg     = dark ? "#2D2257" : "#EDE9FE";
+    const QString lcdFg     = dark ? "#A78BFA" : "#6D28D9";
+
+    // Main window background
+    setStyleSheet(QString(
+        "background-color: %1; font-family: \"Microsoft YaHei UI\";"
+    ).arg(bg));
+
+    // Date label
+    ui->label_1->setStyleSheet(QString(
+        "background-color: %1; color: %2; border-radius: 6px; "
+        "padding: 4px 8px; border: 1px solid %3;"
+    ).arg(cardBg, text, border));
+
+    // LCD clock
+    ui->lcdNumber->setStyleSheet(QString(
+        "background-color: %1; color: %2; border: 1px solid %3; "
+        "border-radius: 8px; padding: 2px;"
+    ).arg(lcdBg, lcdFg, border));
+
+    // Refresh button (pushButton_1)
+    ui->pushButton_1->setStyleSheet(QString(
+        "QPushButton { background-color: %1; border: 1px solid %2; border-radius: 6px; padding: 4px; }"
+        "QPushButton:hover { background-color: %3; border-color: %4; }"
+        "QPushButton:pressed { background-color: %2; }"
+    ).arg(cardBg, border, accentBg, accent));
+
+    // ComboBox
+    ui->comboBox->setStyleSheet(QString(
+        "QComboBox { background-color: %1; color: %2; border: 1px solid %3; "
+        "border-radius: 6px; padding: 2px 6px; }"
+        "QComboBox:hover { border-color: %4; }"
+        "QComboBox::drop-down { border: none; }"
+        "QComboBox QAbstractItemView { background-color: %1; color: %2; "
+        "border: 1px solid %3; selection-background-color: %5; }"
+    ).arg(cardBg, text, border, accent, accentBg));
+
+    // List widget
+    ui->listWidget->setStyleSheet(QString(
+        "QListWidget { background: %1; border: none; border-radius: 8px; padding: 4px; outline: none; }"
+        "QListWidget::item { background: %2; border-radius: 8px; border: 1px solid %3; margin: 3px 2px; padding: 4px; }"
+        "QListWidget::item:hover { background: %4; border-color: %5; }"
+        "QListWidget::item:selected { background: %4; border: 1px solid %5; color: %6; }"
+    ).arg(bg, cardBg, border, accentBg, accent, text));
+
+    // Scrollbar
+    if (QScrollBar *sb = ui->listWidget->verticalScrollBar())
+    {
+        sb->setStyleSheet(QString(
+            "QScrollBar:vertical { background: %1; width: 8px; border-radius: 4px; }"
+            "QScrollBar::handle:vertical { background: %2; border-radius: 4px; min-height: 20px; }"
+            "QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical { height: 0px; }"
+        ).arg(accentBg, accent));
+    }
 }

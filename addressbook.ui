@@ -137,9 +137,10 @@ QPushButton:pressed {
        </size>
       </property>
       <property name="styleSheet">
-       <string notr="true">background-color: #1F2937;
-color: #6EE7B7;
-border-radius: 6px;
+       <string notr="true">background-color: #EDE9FE;
+color: #6D28D9;
+border: 1px solid #DDD6FE;
+border-radius: 8px;
 padding: 2px;</string>
       </property>
       <property name="digitCount">
@@ -359,19 +360,19 @@ QComboBox::drop-down {
 </string>
         </property>
         <property name="currentText">
-         <string>Time</string>
+         <string>Date Added</string>
         </property>
         <property name="insertPolicy">
          <enum>QComboBox::InsertPolicy::InsertAfterCurrent</enum>
         </property>
         <item>
          <property name="text">
-          <string>Time</string>
+          <string>Date Added</string>
          </property>
         </item>
         <item>
          <property name="text">
-          <string>Alphabet</string>
+          <string>Name A-Z</string>
          </property>
         </item>
        </widget>

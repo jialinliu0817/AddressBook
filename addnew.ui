@@ -205,9 +205,10 @@ QLineEdit:focus {
        </font>
       </property>
       <property name="styleSheet">
-       <string notr="true">background-color: #1F2937;
-color: #6EE7B7;
-border-radius: 6px;
+       <string notr="true">background-color: #EDE9FE;
+color: #6D28D9;
+border: 1px solid #DDD6FE;
+border-radius: 8px;
 padding: 2px;</string>
       </property>
       <property name="digitCount">

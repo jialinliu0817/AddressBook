@@ -14,6 +14,7 @@ public:
     explicit AddressBook(QWidget *parent = nullptr);
     ~AddressBook();
     void get_dateAndtime(QString &date, QString &time);
+    void applyTheme(bool dark);
 
 signals:
     void sendText(QString str);
