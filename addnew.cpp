@@ -18,7 +18,7 @@ AddNew::AddNew(QWidget *parent) :
 {
     ui->setupUi(this);
     display_dateAndtime();
-    ui->pushButton_3->setShortcut(Qt::Key_Return); //confirm add contact button
+    ui->pushButton_2->setShortcut(Qt::Key_Return); //confirm add contact button
     connect(timer,SIGNAL(timeout()),this,SLOT(display_dateAndtime()));
     timer->start(1000);
 }
@@ -337,4 +337,70 @@ void AddNew::setName()
     s2 = "";
     ui->lineEdit_1->clear();
     ui->lineEdit_1->setReadOnly(false);
+}
+
+void AddNew::applyTheme(bool dark)
+{
+    const QString bg       = dark ? "#13111C" : "#F5F3FF";
+    const QString cardBg   = dark ? "#1E1B2E" : "#FFFFFF";
+    const QString border   = dark ? "#3B3870" : "#DDD6FE";
+    const QString text     = dark ? "#E5E7EB" : "#1F2937";
+    const QString accent   = "#7C3AED";
+    const QString accentBg = dark ? "#2D2257" : "#EDE9FE";
+    const QString lcdBg    = dark ? "#2D2257" : "#EDE9FE";
+    const QString lcdFg    = dark ? "#A78BFA" : "#6D28D9";
+    const QString errColor = dark ? "#FCA5A5" : "#EF4444";
+
+    setStyleSheet(QString(
+        "background-color: %1; font-family: \"Microsoft YaHei UI\";"
+    ).arg(bg));
+
+    ui->label_1->setStyleSheet(QString(
+        "background-color: %1; color: %2; border-radius: 6px; "
+        "padding: 4px 8px; border: 1px solid %3;"
+    ).arg(cardBg, text, border));
+
+    ui->lcdNumber->setStyleSheet(QString(
+        "background-color: %1; color: %2; border: 1px solid %3; "
+        "border-radius: 8px; padding: 2px;"
+    ).arg(lcdBg, lcdFg, border));
+
+    const QString lineEditStyle = QString(
+        "QLineEdit { background-color: %1; color: %2; border: 1px solid %3; "
+        "border-radius: 6px; padding: 4px 8px; }"
+        "QLineEdit:focus { border-color: %4; }"
+    ).arg(cardBg, text, border, accent);
+    ui->lineEdit_1->setStyleSheet(lineEditStyle);
+    ui->lineEdit_2->setStyleSheet(lineEditStyle);
+    ui->lineEdit_3->setStyleSheet(lineEditStyle);
+    ui->lineEdit_4->setStyleSheet(lineEditStyle);
+
+    // Browse button (secondary)
+    ui->pushButton_1->setStyleSheet(QString(
+        "QPushButton { background-color: %1; color: %2; border: 1px solid %2; "
+        "border-radius: 6px; padding: 4px 8px; }"
+        "QPushButton:hover { background-color: %3; }"
+        "QPushButton:pressed { background-color: %4; }"
+    ).arg(cardBg, accent, accentBg, border));
+
+    // Confirm button (primary – keep violet regardless of theme)
+    ui->pushButton_2->setStyleSheet(
+        "QPushButton { background-color: #7C3AED; color: #FFFFFF; border: none; "
+        "border-radius: 6px; padding: 4px 8px; }"
+        "QPushButton:hover { background-color: #6D28D9; }"
+        "QPushButton:pressed { background-color: #5B21B6; }"
+    );
+
+    // Reset button (outlined)
+    ui->pushButton_3->setStyleSheet(QString(
+        "QPushButton { background-color: %1; color: %2; border: 1px solid %3; "
+        "border-radius: 6px; padding: 4px 8px; }"
+        "QPushButton:hover { background-color: %4; border-color: %2; }"
+        "QPushButton:pressed { background-color: %3; }"
+    ).arg(cardBg, accent, border, accentBg));
+
+    // Error/info label (label_8 inside scroll area)
+    ui->label_8->setStyleSheet(QString(
+        "background-color: %1; color: %2; border-radius: 4px; padding: 2px 4px;"
+    ).arg(cardBg, errColor));
 }

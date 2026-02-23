@@ -42,7 +42,8 @@
    <iconset theme="QIcon::ThemeIcon::AddressBookNew"/>
   </property>
   <property name="styleSheet">
-   <string notr="true">background-color: rgb(198, 184, 255);
+   <string notr="true">background-color: #F5F3FF;
+font-family: "Microsoft YaHei UI";
 </string>
   </property>
   <property name="iconSize">
@@ -100,7 +101,19 @@
          </font>
         </property>
         <property name="styleSheet">
-         <string notr="true">background-color: rgb(255, 255, 255);</string>
+         <string notr="true">QPushButton {
+    background-color: #7C3AED;
+    color: #FFFFFF;
+    border: none;
+    border-radius: 6px;
+    padding: 4px 8px;
+}
+QPushButton:hover {
+    background-color: #6D28D9;
+}
+QPushButton:pressed {
+    background-color: #5B21B6;
+}</string>
         </property>
         <property name="text">
          <string>Search</string>
@@ -124,8 +137,11 @@
        </size>
       </property>
       <property name="styleSheet">
-       <string notr="true">background-color: rgb(255, 255, 255);
-color: rgb(0, 0, 0);</string>
+       <string notr="true">background-color: #EDE9FE;
+color: #6D28D9;
+border: 1px solid #DDD6FE;
+border-radius: 8px;
+padding: 2px;</string>
       </property>
       <property name="digitCount">
        <number>8</number>
@@ -156,7 +172,11 @@ color: rgb(0, 0, 0);</string>
        </font>
       </property>
       <property name="styleSheet">
-       <string notr="true">background-color: rgb(255, 255, 255);</string>
+       <string notr="true">background-color: #FFFFFF;
+color: #1F2937;
+border-radius: 6px;
+padding: 4px 8px;
+border: 1px solid #DDD6FE;</string>
       </property>
       <property name="text">
        <string/>
@@ -187,7 +207,19 @@ color: rgb(0, 0, 0);</string>
        <bool>false</bool>
       </property>
       <property name="styleSheet">
-       <string notr="true">background-color: rgb(255, 255, 255);</string>
+       <string notr="true">QPushButton {
+    background-color: #FFFFFF;
+    border: 1px solid #DDD6FE;
+    border-radius: 6px;
+    padding: 4px;
+}
+QPushButton:hover {
+    background-color: #EDE9FE;
+    border-color: #7C3AED;
+}
+QPushButton:pressed {
+    background-color: #DDD6FE;
+}</string>
       </property>
       <property name="text">
        <string/>
@@ -231,9 +263,6 @@ color: rgb(0, 0, 0);</string>
       </property>
       <property name="contextMenuPolicy">
        <enum>Qt::ContextMenuPolicy::CustomContextMenu</enum>
-      </property>
-      <property name="styleSheet">
-       <string notr="true">background-color: rgb(255, 255, 255);</string>
       </property>
       <property name="autoScrollMargin">
        <number>14</number>
@@ -285,13 +314,13 @@ color: rgb(0, 0, 0);</string>
         </property>
         <property name="minimumSize">
          <size>
-          <width>90</width>
+          <width>115</width>
           <height>30</height>
          </size>
         </property>
         <property name="maximumSize">
          <size>
-          <width>90</width>
+          <width>150</width>
           <height>30</height>
          </size>
         </property>
@@ -306,6 +335,9 @@ color: rgb(0, 0, 0);</string>
         <property name="mouseTracking">
          <bool>true</bool>
         </property>
+        <property name="sizeAdjustPolicy">
+         <enum>QComboBox::SizeAdjustPolicy::AdjustToContents</enum>
+        </property>
         <property name="layoutDirection">
          <enum>Qt::LayoutDirection::LeftToRight</enum>
         </property>
@@ -313,26 +345,37 @@ color: rgb(0, 0, 0);</string>
          <bool>false</bool>
         </property>
         <property name="styleSheet">
-         <string notr="true">background-color: rgb(255, 255, 255);
-selection-color: rgb(0, 0, 0);
-color: rgb(0, 0, 0);
-selection-background-color: rgb(255, 255, 255);
+         <string notr="true">QComboBox {
+    background-color: #FFFFFF;
+    color: #1F2937;
+    border: 1px solid #DDD6FE;
+    border-radius: 6px;
+    padding: 2px 6px;
+    selection-background-color: #EDE9FE;
+    selection-color: #6D28D9;
+}
+QComboBox:hover {
+    border-color: #7C3AED;
+}
+QComboBox::drop-down {
+    border: none;
+}
 </string>
         </property>
         <property name="currentText">
-         <string>Time</string>
+         <string>Date Added</string>
         </property>
         <property name="insertPolicy">
          <enum>QComboBox::InsertPolicy::InsertAfterCurrent</enum>
         </property>
         <item>
          <property name="text">
-          <string>Time</string>
+          <string>Date Added</string>
          </property>
         </item>
         <item>
          <property name="text">
-          <string>Alphabet</string>
+          <string>Name A-Z</string>
          </property>
         </item>
        </widget>
