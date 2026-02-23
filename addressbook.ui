@@ -263,31 +263,6 @@ QPushButton:pressed {
       <property name="contextMenuPolicy">
        <enum>Qt::ContextMenuPolicy::CustomContextMenu</enum>
       </property>
-      <property name="styleSheet">
-       <string notr="true">QListWidget {
-    background: #F5F3FF;
-    border: none;
-    border-radius: 8px;
-    padding: 4px;
-    outline: none;
-}
-QListWidget::item {
-    background: #FFFFFF;
-    border-radius: 8px;
-    border: 1px solid #DDD6FE;
-    margin: 3px 2px;
-    padding: 4px;
-}
-QListWidget::item:hover {
-    background: #EDE9FE;
-    border-color: #7C3AED;
-}
-QListWidget::item:selected {
-    background: #EDE9FE;
-    border: 1px solid #7C3AED;
-    color: #1F2937;
-}</string>
-      </property>
       <property name="autoScrollMargin">
        <number>14</number>
       </property>
