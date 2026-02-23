@@ -21,7 +21,20 @@ AddressBook::AddressBook(QWidget *parent) :
     ui(new Ui::AddressBook)
 {
     ui->setupUi(this);
-    ui->listWidget->verticalScrollBar()->setStyleSheet("QScrollBar:vertical{background: #d0d0d0;}");
+    ui->listWidget->verticalScrollBar()->setStyleSheet(
+        "QScrollBar:vertical {"
+        "    background: #EDE9FE;"
+        "    width: 8px;"
+        "    border-radius: 4px;"
+        "}"
+        "QScrollBar::handle:vertical {"
+        "    background: #7C3AED;"
+        "    border-radius: 4px;"
+        "    min-height: 20px;"
+        "}"
+        "QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical {"
+        "    height: 0px;"
+        "}");
     display_dateAndtime();
     ListSqlite(1);
     connect(timer,SIGNAL(timeout()),this,SLOT(display_dateAndtime()));
@@ -75,29 +88,29 @@ void AddressBook::on_pushButton_2_clicked()
     s1 = m1.textValue();
     m1.setAttribute(Qt::WA_DeleteOnClose);
 
-    qint8 j = 0;
     QString res1;
-    bool f1 = true;
-    while(f1)
+    bool found = false;
+    for(int i = 0; i < ui->listWidget->count(); i++)
     {
-        for(int i = 0; i < ui->listWidget->count();i++)
-        {
-            QString s2 =  ui->listWidget->item(i)->text();
-            QStringList s3 = s2.split("\n");
-            QString s4 = s3.at(1); //s4= (name: name)
-            QString s5 = s3.at(0); //s5= (contact, index)
-            QStringList s6 = s4.split(":");
-            s4 = s6.last().simplified();  //name search for
-            s6 = s5.split(":");
-            s5 = s6.last().simplified();  //index
+        QString s2 = ui->listWidget->item(i)->text();
+        QStringList s3 = s2.split("\n");
+        QString s4 = s3.at(1); //s4= (name: name)
+        QStringList s6 = s4.split(":");
+        s4 = s6.last().simplified();  //name to search for
 
-            if(s1 == s4)
-            {
-                res1 = s2;
-                f1 = false;
-                if(!f1) break;
-            }
+        if(s1 == s4)
+        {
+            res1 = s2;
+            found = true;
+            break;
         }
+    }
+
+    if(!found)
+    {
+        QMessageBox::information(this, "Search Result",
+                                 QString("Contact \"%1\" not found.").arg(s1));
+        return;
     }
 
     QMessageBox m2;
@@ -135,9 +148,22 @@ void AddressBook::on_listWidget_customContextMenuRequested(const QPoint &pos)
 {
     QMenu  *m1 = new QMenu(ui->listWidget);
 
-    m1->setStyleSheet("QMenu{background-color: rgb(255,255,255);}\
-                       QMenu::item{background-color: #ffffff;}\
-                       QMenu::item:hover,QMenu::item:selected{background-color: rgb(198, 184, 255);}");
+    m1->setStyleSheet(
+        "QMenu {"
+        "    background-color: #FFFFFF;"
+        "    border: 1px solid #DDD6FE;"
+        "    border-radius: 8px;"
+        "    padding: 4px;"
+        "}"
+        "QMenu::item {"
+        "    background-color: transparent;"
+        "    padding: 6px 20px 6px 10px;"
+        "    border-radius: 4px;"
+        "}"
+        "QMenu::item:hover, QMenu::item:selected {"
+        "    background-color: #EDE9FE;"
+        "    color: #6D28D9;"
+        "}");
 
     QFont f1;
     f1.setPointSize(12);
@@ -183,6 +209,32 @@ void AddressBook::ListSqlite(bool q1)
         b1.exec("Select * From contact order by name ASC");
     }
 
+    ui->listWidget->setStyleSheet(
+        "QListWidget {"
+        "    background: #F5F3FF;"
+        "    border: none;"
+        "    border-radius: 8px;"
+        "    padding: 4px;"
+        "    outline: none;"
+        "}"
+        "QListWidget::item {"
+        "    background: #FFFFFF;"
+        "    border-radius: 8px;"
+        "    border: 1px solid #DDD6FE;"
+        "    margin: 3px 2px;"
+        "    padding: 4px;"
+        "}"
+        "QListWidget::item:hover {"
+        "    background: #EDE9FE;"
+        "    border-color: #7C3AED;"
+        "}"
+        "QListWidget::item:selected {"
+        "    background: #EDE9FE;"
+        "    border: 1px solid #7C3AED;"
+        "    color: #1F2937;"
+        "}");
+    ui->listWidget->setSpacing(2);
+
     qint64 i=1;
     while(b1.next())
     {
@@ -206,41 +258,31 @@ void AddressBook::ListSqlite(bool q1)
         add_item->setSizeHint(QSize(400,140));
         add_item->setFont(QFont("Microsoft YaHei UI",12));
 
-
-        QString path = "./pic";
-        QDir dir(path);
-        if(!dir.exists())
+        QDir dir("./pic");
+        if(dir.exists())
         {
-            return;
-        }
-        dir.setFilter(QDir::Files | QDir::NoSymLinks);
-        QStringList filters;
-        filters << QString("%1.png").arg(name) << QString("%1.jpg").arg(name);
-        dir.setNameFilters(filters);
-        QStringList list = dir.entryList();
-        if (list.count() <= 0)
-        {
-            return;
-        }
+            dir.setFilter(QDir::Files | QDir::NoSymLinks);
+            QStringList filters;
+            filters << QString("%1.png").arg(name) << QString("%1.jpg").arg(name);
+            dir.setNameFilters(filters);
+            QStringList list = dir.entryList();
+            if(list.count() > 0)
+            {
+                QStringList r2 = list.last().split(".");
+                r3 = r2.last();  //suffix of contact avatar
 
-        QStringList r2 = list.last().split(".");
-        r3 = r2.last();  //suffix of contact avatar
-
-        QFileInfo t1(QString("./pic/%1").arg(list.last()));
-        if(t1.isFile())
-        {
-            add_item->setIcon(QIcon(QString("./pic/%1").arg(list.last())));
+                QFileInfo t1(QString("./pic/%1").arg(list.last()));
+                if(t1.isFile())
+                {
+                    add_item->setIcon(QIcon(QString("./pic/%1").arg(list.last())));
+                }
+            }
         }
 
         ui->listWidget->setIconSize(QSize(160,140));
         add_item->setText(a);
 
         ui->listWidget->addItem(add_item);
-        ui->listWidget->setStyleSheet("QListWidget{background:rgb(255,255,255); border: 2px solid #fff; border-radius: 5px}"
-                                      "QListWidget::Item{background: rgb(255,255,255); border-radius: 5px; border: 1px solid rgb(198, 184, 255);}"
-                                      "QListWidget::Item:hover{background: rgb(205,205,205);}"
-                                      "QListWidget::Item:selected{background: rgb(105,105,105); color: rgb(0,0,0)}");
-        ui->listWidget->setSpacing(1);
 
     }
     a1.close();

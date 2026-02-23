@@ -18,7 +18,7 @@ AddNew::AddNew(QWidget *parent) :
 {
     ui->setupUi(this);
     display_dateAndtime();
-    ui->pushButton_3->setShortcut(Qt::Key_Return); //confirm add contact button
+    ui->pushButton_2->setShortcut(Qt::Key_Return); //confirm add contact button
     connect(timer,SIGNAL(timeout()),this,SLOT(display_dateAndtime()));
     timer->start(1000);
 }
